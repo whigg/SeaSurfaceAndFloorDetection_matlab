@@ -146,7 +146,7 @@ if __name__=='__main__':
     plt.xlabel('lat_ph/dgree')
     plt.ylabel('h_ph/meter')
     plt.legend(loc='best')
-    plt.savefig('./pic/section/DetectionResult_0801-0.7m.png')
+    plt.savefig('./pic/section/DetectionResult_0806.png')
 
     plt.close()
     print('Done!')

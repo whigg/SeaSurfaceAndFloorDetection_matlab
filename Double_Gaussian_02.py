@@ -9,13 +9,14 @@ import numpy as np
 import matlab.engine
 import matplotlib.pyplot as plt
 
-def gaussian(x, a,u, sigma):
+def Gaussian1(x, a,u, sigma):
     return a * np.exp(-((x - u) /sigma)**2)
 
-def double_Gaussian(x, a1, u1, sigma1, a2, u2, sigma2):
+def Gaussian2(x, a1, u1, sigma1, a2, u2, sigma2):
      return a1 * np.exp(-((x - u1) / sigma1) ** 2) + a2 * np.exp(-((x - u2) / sigma2) ** 2)
 
-def run_gaussian(eng = matlab.engine.start_matlab()):
+def Gaussian1_fit(eng = matlab.engine.start_matlab(),hist=[0,1]):
+     np.savetxt('./output/data_1fit.txt', hist, delimiter=' ')
      try:
           eng.eval(
                "data=textread('D:\Program Files (x86)\PyCharm\PycharmProjects\PythonProject\BathymetricDepthModel\output\data_1fit.txt');",
@@ -36,7 +37,8 @@ def run_gaussian(eng = matlab.engine.start_matlab()):
           Gaus_para=[1,np.median(data[:,0]),(np.max(data[:,0])-np.min(data[:,0]))/2]
      return Gaus_para
 
-def run_double_Gaussian(eng = matlab.engine.start_matlab()):
+def Gaussian2_fit(eng = matlab.engine.start_matlab(),hist=[0,1]):
+     np.savetxt('./output/data_2fit.txt', hist, delimiter=' ')
      eng.eval(
           "data=textread('D:\Program Files (x86)\PyCharm\PycharmProjects\PythonProject\BathymetricDepthModel\output\data_2fit.txt');",
           nargout=0)
@@ -52,40 +54,43 @@ def run_double_Gaussian(eng = matlab.engine.start_matlab()):
           'D:\Program Files (x86)\PyCharm\PycharmProjects\PythonProject\BathymetricDepthModel\output\Gaus2_para.txt')
      return Gaus_para
 
-def visualize_gaussian(data,med,sigma2,num,times):
-     plt.figure(figsize=(8,4.5))
-     # plt.scatter(data[:,0],data[:,1],marker='.',c='r',label='true')
-     x=np.linspace(np.min(data[:,0]),np.max(data[:,0]),100)
-     # y=gaussian(x,para[0],para[1],para[2])
-     # plt.plot(x,y,c='r',label='fit')
-     plt.bar(data[:,0], data[:,1], label='hist_h',width=0.1)
-     plt.axvline(x=med, ls='-', c='r',label='median='+str(format(med, '.3f'))) # 添加垂直线
-     plt.axvline(x=med-2*abs(sigma2), ls='--', c='gray' ) # 添加垂直线
-     plt.axvline(x=med+2*abs(sigma2), ls='--', c='gray',) # 添加垂直线
-     plt.xlabel('h')
-     plt.ylabel('count')
-     plt.legend(loc='best')
-     plt.savefig('./pic/seaFloor/Gaussian1&Hist_'+str(format(times, '1d'))+'_'+str(format(num, '1.3f'))+'.png')
-     # plt.pause(10)
-     plt.close()
 
-def visualize_double_Gaussian(data,para,u1,sigma1,num):
-     plt.figure(figsize=(8,4.5))
-     # plt.scatter(data[:,0],data[:,1],marker='.',c='r',label='true')
-     x=np.linspace(np.min(data[:,0]),np.max(data[:,0]),100)
-     y=double_Gaussian(x,para[0],para[1],para[2],para[3],para[4],para[5])
-     plt.plot(x,y,c='r',label='fit')
-     plt.bar(data[:,0], data[:,1], label='hist_h',width=0.1)
-     plt.axvline(x=u1, ls='-', c='deeppink',label='u1='+str(format(u1, '.3f'))) # 添加垂直线
-     # plt.axvline(x=para[4], ls='-', c='red',label='u2='+str(format(para[4], '.3f'))) # 添加垂直线
-     plt.axvline(x=u1-3*abs(sigma1), ls='--', c='gray') # 添加垂直线
-     plt.axvline(x=u1+3*abs(sigma1), ls='--', c='gray') # 添加垂直线
-     plt.xlabel('h')
-     plt.ylabel('count')
-     plt.legend(loc='best')
-     plt.savefig('./pic/seaSurface/Gaussian2&Hist_'+str(format(num, '1.3f'))+'.png')
-     # plt.pause(10)
-     plt.close()
+def Gaussian1_show(data, med, sigma2, num, times):
+    plt.figure(figsize=(8, 4.5))
+    # plt.scatter(data[:,0],data[:,1],marker='.',c='r',label='true')
+    x = np.linspace(np.min(data[:, 0]), np.max(data[:, 0]), 100)
+    # y=gaussian(x,para[0],para[1],para[2])
+    # plt.plot(x,y,c='r',label='fit')
+    plt.bar(data[:, 0], data[:, 1], label='hist_h', width=0.1)
+    plt.axvline(x=med, ls='-', c='r', label='median=' + str(format(med, '.3f')))  # 添加垂直线
+    plt.axvline(x=med - 2 * abs(sigma2), ls='--', c='gray')  # 添加垂直线
+    plt.axvline(x=med + 2 * abs(sigma2), ls='--', c='gray', )  # 添加垂直线
+    plt.xlabel('h')
+    plt.ylabel('count')
+    plt.legend(loc='best')
+    plt.savefig('./pic/seaFloor/Gaussian1&Hist_' + str(format(times, '1d')) + '_' + str(format(num, '1.3f')) + '.png')
+    # plt.pause(10)
+    plt.close()
+
+
+def Gaussian2_show(data,para,u1, sigma1, num):
+    plt.figure(figsize=(8, 4.5))
+    # plt.scatter(data[:,0],data[:,1],marker='.',c='r',label='true')
+    x = np.linspace(np.min(data[:, 0]), np.max(data[:, 0]), 100)
+    y = Gaussian2(x, para[0], para[1], para[2], para[3], para[4], para[5])
+    plt.plot(x, y, c='r', label='fit')
+    plt.bar(data[:, 0], data[:, 1], label='hist_h', width=0.1)
+    plt.axvline(x=u1, ls='-', c='deeppink', label='u1=' + str(format(u1, '.3f')))  # 添加垂直线
+    # plt.axvline(x=para[4], ls='-', c='red',label='u2='+str(format(para[4], '.3f'))) # 添加垂直线
+    plt.axvline(x=u1 - 3 * abs(sigma1), ls='--', c='gray')  # 添加垂直线
+    plt.axvline(x=u1 + 3 * abs(sigma1), ls='--', c='gray')  # 添加垂直线
+    plt.xlabel('h')
+    plt.ylabel('count')
+    plt.legend(loc='best')
+    plt.savefig('./pic/seaSurface/Gaussian2&Hist_' + str(format(num, '1.3f')) + '.png')
+    # plt.pause(10)
+    plt.close()
+
 
 if __name__=='__main__':
 
@@ -114,7 +119,7 @@ if __name__=='__main__':
      plt.figure(figsize=(16,9))
      plt.scatter(data[:,0],data[:,1],marker='.',c='r',label='true')
      x=np.linspace(np.min(data[:,0]),np.max(data[:,0]),100)
-     y=double_Gaussian(x,ok[0],ok[1],ok[2],ok[3],ok[4],ok[5])
+     y=Gaussian2(x,ok[0],ok[1],ok[2],ok[3],ok[4],ok[5])
      plt.plot(x,y,c='b',label='fit')
      plt.axvline(x=ok[1], ls='--', c='red',label='u1='+str(ok[1])) # 添加垂直线
      plt.axvline(x=ok[4], ls='--', c='red',label='u2='+str(ok[4])) # 添加垂直线
