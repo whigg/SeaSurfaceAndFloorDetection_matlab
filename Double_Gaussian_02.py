@@ -34,7 +34,7 @@ def Gaussian1_fit(eng = matlab.engine.start_matlab(),hist=[0,1]):
      except:
           data=np.loadtxt(
                'D:\Program Files (x86)\PyCharm\PycharmProjects\PythonProject\BathymetricDepthModel\output\data_1fit.txt',delimiter=' ')
-          Gaus_para=[1,np.median(data[:,0]),(np.max(data[:,0])-np.min(data[:,0]))/2]
+          Gaus_para=[1,np.median(data[:,0]),(np.max(data[:,0])-np.min(data[:,0]))/6]
      return Gaus_para
 
 def Gaussian2_fit(eng = matlab.engine.start_matlab(),hist=[0,1]):

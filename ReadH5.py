@@ -16,7 +16,7 @@ import numpy as np
 import pandas as pd
 
 
-def h5TOcsv(h5file, beam, bound=[111.59, 16.530, 111.62, 16.55]):
+def h5TOcsv(h5file, beam, bound=[111.59, 16.5325, 111.62, 16.555]):
     '''beam为激光波束，在ICESat-2中分别有gt1l,gt1r,gt2l,gt2r,gt3l,gt3r六种激光波束'''
     # HDF5的读取：
     print("Running:Open h5file")

@@ -85,6 +85,14 @@ def surfaceAndFloorDetection(csvfile, step_01, step_02):
             (u1 - 3 * abs(sigma1) <= data_atl03['h_ph']) & (data_atl03['h_ph'] < u1 + 3 * abs(sigma1))]
         underSurface_ = data_atl03[data_atl03['h_ph'] <= u1 - 3 * abs(sigma1)]
 
+
+
+        # 第二次海面光子滤波
+        hist_1 = hist(seaSurface_['h_ph'].values, v)
+        para = GausFit.Gaussian1_fit(eng, hist_1)
+        seaSurface_ = seaSurface_[
+            (para[1] - 3 * abs(para[2]) <= seaSurface_['h_ph']) & (seaSurface_['h_ph'] < para[1] + 3 * abs(para[2]))]
+
         aboveSurface = pd.concat([aboveSurface, aboveSurface_], ignore_index=False)
         seaSurface = pd.concat([seaSurface, seaSurface_], ignore_index=False)
         underSurface = pd.concat([underSurface, underSurface_], ignore_index=False)
@@ -102,7 +110,7 @@ def surfaceAndFloorDetection(csvfile, step_01, step_02):
         seafloor_ = underSurface[(beg_02 <= underSurface['X']) & (underSurface['X'] < end_02)]
         ic(len(seafloor_))
         i = 0
-        while len(seafloor_) > 10 and i < 3:
+        while len(seafloor_) > 6 and i < 3:
             # 中值滤波迭代3次
             # if i == 0:
             #     median = np.median(seafloor_['h_ph'])
@@ -113,7 +121,7 @@ def surfaceAndFloorDetection(csvfile, step_01, step_02):
             print(para)
             seafloor_0 = seafloor_[
                 (median - 2 * abs(sigma2) <= seafloor_['h_ph']) & (seafloor_['h_ph'] < median + 2 * abs(sigma2))]
-            if len(seafloor_0) > 12:
+            if len(seafloor_0) > 3:
                 seafloor_ = seafloor_0
             GausFit.Gaussian1_show(hist_1,  median, sigma2, beg_02, i)
             if i == 0:
