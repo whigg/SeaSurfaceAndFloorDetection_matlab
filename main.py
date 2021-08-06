@@ -17,8 +17,8 @@ from icecream import ic
 
 if __name__ == '__main__':
     path0=os.getcwd()
-    # bound = [111.59, 16.532, 111.62, 16.552]#0222
-    bound = [111.59, 16.530, 111.62, 16.5476]
+    bound = [111.59, 16.532, 111.62, 16.552]#20190222
+    # bound = [111.59, 16.530, 111.62, 16.5476]#20190524
     step1 = 1
     step2 = 30
     print("********************************************")
@@ -30,8 +30,8 @@ if __name__ == '__main__':
     seafloor_all=[]
 
     for beam in ['gt1l','gt2l','gt3l']:  #循环处理3个激光波束
-        # h5File = 'ATL03_20190222135159_08570207_003_01'
-        h5File = 'ATL03_20190524093136_08570307_003_01'
+        h5File = 'ATL03_20190222135159_08570207_003_01'
+        # h5File = 'ATL03_20190524093136_08570307_003_01'
         prefix = h5File +'+'+ beam
         print('------------------------------')
         ic(prefix)
@@ -59,13 +59,13 @@ if __name__ == '__main__':
     os.chdir(path0)
     print(len(seasurface_all))
     seasurface_all=np.array(seasurface_all)
-    seasurface_all_cut=seasurface_all[:,2:5]
-    np.savetxt('./output/seasurface_all_0806.txt',seasurface_all_cut,delimiter=',',fmt='%.03f')
+    seasurface_all_cut=seasurface_all[:,0:5]
+    np.savetxt('./output/seasurface.txt',seasurface_all_cut,delimiter=',',fmt='%.03f')
 
     print(len( seafloor_all))
     seafloor_all = np.array(seafloor_all)
-    seafloor_all_cut =  seafloor_all[:, 2:5]
-    np.savetxt('./output/seafloor_all_0806.txt', seafloor_all_cut, delimiter=',',fmt='%.03f')#,
+    seafloor_all_cut =  seafloor_all[:, 0:5]
+    np.savetxt('./output/seafloor.txt', seafloor_all_cut, delimiter=',',fmt='%.03f')#,
 
 
 
