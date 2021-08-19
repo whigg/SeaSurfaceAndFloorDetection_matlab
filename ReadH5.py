@@ -48,10 +48,10 @@ def h5TOcsv(h5file, beam, bound=[111.59, 16.5325, 111.62, 16.555]):
         if (coorSet_T[i, 1] > bound[3]) or (coorSet_T[i, 1] < bound[1]):
             invalidDataSet.append(i)
             continue
-        # # 按高度清洗
-        # if (coorSet_T[i, 2] > 1000):
-        #     invalidDataSet.append(i)
-        #     continue
+        # 按高度清洗
+        if (coorSet_T[i, 2] > 40) or (coorSet_T[i, 2] < -40):
+            invalidDataSet.append(i)
+            continue
     coorSet_T = np.delete(coorSet_T, invalidDataSet, axis=0)
     # </editor-fold>
     print("Running:coorSet_T:", len(coorSet_T))

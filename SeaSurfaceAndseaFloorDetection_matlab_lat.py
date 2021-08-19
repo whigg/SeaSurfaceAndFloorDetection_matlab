@@ -1,9 +1,10 @@
-# File      :SeaSurface&seaFloorDetection_matlab.py
+# File      :SeaSurfaceAndseaFloorDetection_matlab_lat.py
 # Author    :WJ
 # Function  :
-# Time      :2021/07/03
+# Time      :2021/08/13
 # Version   :
 # Amend     :
+
 
 
 import math
@@ -48,10 +49,10 @@ def surfaceAndFloorDetection(csvfile, step_01, step_02):
     # 1.导入光子数据
     # ATL03 = pd.read_csv(csvfile)
     ATL03 = csvfile
-    ATL03.sort_values('dist_ph_along', inplace=True, ignore_index=True)
+    ATL03.sort_values('X', inplace=True, ignore_index=True)
     # '数据组织形式：'
     print(ATL03.columns.values)
-    beg_01 = np.min(ATL03['dist_ph_along'])
+    beg_01 = np.min(ATL03['X'])
     # 2.设置输出格式
     aboveSurface = pd.DataFrame(columns=ATL03.columns.values)
     seaSurface = pd.DataFrame(columns=ATL03.columns.values)
@@ -61,12 +62,12 @@ def surfaceAndFloorDetection(csvfile, step_01, step_02):
     eng = matlab.engine.start_matlab()
 
     # 3.进行光子检测
-    while beg_01 < np.max(ATL03['dist_ph_along']):
+    while beg_01 < np.max(ATL03['X']):
         end_01 = beg_01 + step_01
         print('----------------------------------')
         print('%.3f' % beg_01, '%.3f' % end_01)
         # 3.1 对原数据切片
-        data_atl03 = ATL03[(beg_01 <= ATL03['dist_ph_along']) & (ATL03['dist_ph_along'] < end_01)]
+        data_atl03 = ATL03[(beg_01 <= ATL03['X']) & (ATL03['X'] < end_01)]
         if len(data_atl03)>6:
             # 3.2 计算总直方图
             n = len(data_atl03)
@@ -79,11 +80,12 @@ def surfaceAndFloorDetection(csvfile, step_01, step_02):
             print(para)
             u1, sigma1 = get_u1sigma1(para)
             # 绘制双峰高斯分布曲线
-            # GausFit.Gaussian2_show(hist_2, para, u1, sigma1, beg_01)
+            GausFit.Gaussian2_show(hist_2, para, u1, sigma1, beg_01)
             # 3.4 海表探测
             seaSurface_ = data_atl03[
                 (u1 - 3 * abs(sigma1) <= data_atl03['h_ph']) & (data_atl03['h_ph'] < u1 + 3 * abs(sigma1))]
             # 第二次海面光子滤波
+            ic(seaSurface_)
             hist_1 = hist(seaSurface_['h_ph'].values, v)
             para = GausFit.Gaussian1_fit(eng, hist_1)
 
@@ -113,7 +115,6 @@ def surfaceAndFloorDetection(csvfile, step_01, step_02):
         print('%.3f' % beg_02, '%.3f' % end_02)
         # 3.1 对原数据切片
         seafloor_ = underSurface[(beg_02 <= underSurface['X']) & (underSurface['X'] < end_02)]
-        ic(len(seafloor_))
         i = 0
         while len(seafloor_) > 6 and i < 3:
             # 中值滤波迭代3次
